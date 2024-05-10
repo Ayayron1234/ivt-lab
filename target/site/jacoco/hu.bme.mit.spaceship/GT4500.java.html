@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GT4500.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hu.bme.mit.spaceship</a> &gt; <a href="index.source.html" class="el_package">hu.bme.mit.spaceship</a> &gt; <span class="el_source">GT4500.java</span></div><h1>GT4500.java</h1><pre class="source lang-java linenums">package hu.bme.mit.spaceship;
+
+/**
+* A simple spaceship with two proton torpedo stores and four lasers
+*/
+public class GT4500 implements SpaceShip {
+
+  private TorpedoStore primaryTorpedoStore;
+  private TorpedoStore secondaryTorpedoStore;
+
+<span class="pc" id="L11">  private boolean wasPrimaryFiredLast = false;</span>
+
+<span class="nc" id="L13">  public GT4500() {</span>
+<span class="nc" id="L14">    this.primaryTorpedoStore = new TorpedoStore(10);</span>
+<span class="nc" id="L15">    this.secondaryTorpedoStore = new TorpedoStore(10);</span>
+<span class="nc" id="L16">  }</span>
+
+<span class="fc" id="L18">  public GT4500(TorpedoStore primary, TorpedoStore secondary) {</span>
+<span class="fc" id="L19">    this.primaryTorpedoStore = primary;</span>
+<span class="fc" id="L20">    this.secondaryTorpedoStore = secondary;</span>
+<span class="fc" id="L21">  }</span>
+
+  public boolean fireLaser(FiringMode firingMode) {
+    // TODO not implemented yet
+<span class="nc" id="L25">    return false;</span>
+  }
+
+  /**
+  * Tries to fire the torpedo stores of the ship.
+  *
+  * @param firingMode how many torpedo bays to fire
+  * 	SINGLE: fires only one of the bays.
+  * 			- For the first time the primary store is fired.
+  * 			- To give some cooling time to the torpedo stores, torpedo stores are fired alternating.
+  * 			- But if the store next in line is empty, the ship tries to fire the other store.
+  * 			- If the fired store reports a failure, the ship does not try to fire the other one.
+  * 	ALL:	tries to fire both of the torpedo stores.
+  *
+  * @return whether at least one torpedo was fired successfully
+  */
+  @Override
+  public boolean fireTorpedo(FiringMode firingMode) {
+
+<span class="fc" id="L44">    boolean firingSuccess = false;</span>
+
+<span class="pc bpc" id="L46" title="1 of 3 branches missed.">    switch (firingMode) {</span>
+      case SINGLE:
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        if (wasPrimaryFiredLast) {</span>
+          // try to fire the secondary first
+<span class="fc bfc" id="L50" title="All 2 branches covered.">          if (! secondaryTorpedoStore.isEmpty()) {</span>
+<span class="fc" id="L51">            firingSuccess = secondaryTorpedoStore.fire(1);</span>
+<span class="fc" id="L52">            wasPrimaryFiredLast = false;</span>
+<span class="fc" id="L53">          }</span>
+          else {
+            // although primary was fired last time, but the secondary is empty
+            // thus try to fire primary again
+<span class="fc bfc" id="L57" title="All 2 branches covered.">            if (! primaryTorpedoStore.isEmpty()) {</span>
+<span class="fc" id="L58">              firingSuccess = primaryTorpedoStore.fire(1);</span>
+<span class="fc" id="L59">              wasPrimaryFiredLast = true;</span>
+            }
+
+            // if both of the stores are empty, nothing can be done, return failure
+          }
+<span class="fc" id="L64">        }</span>
+        else {
+          // try to fire the primary first
+<span class="fc bfc" id="L67" title="All 2 branches covered.">          if (! primaryTorpedoStore.isEmpty()) {</span>
+<span class="fc" id="L68">            firingSuccess = primaryTorpedoStore.fire(1);</span>
+<span class="fc" id="L69">            wasPrimaryFiredLast = true;</span>
+<span class="fc" id="L70">          }</span>
+          else {
+            // although secondary was fired last time, but primary is empty
+            // thus try to fire secondary again
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            if (! secondaryTorpedoStore.isEmpty()) {</span>
+<span class="fc" id="L75">              firingSuccess = secondaryTorpedoStore.fire(1);</span>
+<span class="fc" id="L76">              wasPrimaryFiredLast = false;</span>
+            }
+
+            // if both of the stores are empty, nothing can be done, return failure
+          }
+        }
+<span class="fc" id="L82">        break;</span>
+
+      case ALL:
+        // try to fire both of the torpedo stores
+<span class="fc" id="L86">        boolean primaryFired = primaryTorpedoStore.fire(1);</span>
+<span class="fc" id="L87">        boolean secondaryFired = secondaryTorpedoStore.fire(1);</span>
+<span class="fc bfc" id="L88" title="All 4 branches covered.">        firingSuccess = primaryFired || secondaryFired;</span>
+        break;
+    }
+
+<span class="fc" id="L92">    return firingSuccess;</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

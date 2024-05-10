@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TorpedoStore.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">hu.bme.mit.spaceship</a> &gt; <a href="index.source.html" class="el_package">hu.bme.mit.spaceship</a> &gt; <span class="el_source">TorpedoStore.java</span></div><h1>TorpedoStore.java</h1><pre class="source lang-java linenums">package hu.bme.mit.spaceship;
+
+import java.util.Random;
+
+/**
+* Class storing and managing the torpedoes of a ship
+*
+* (Deliberately contains bugs.)
+*/
+public class TorpedoStore {
+
+  // rate of failing to fire torpedos [0.0, 1.0]
+<span class="nc" id="L13">  private double FAILURE_RATE = 0.0; //NOSONAR</span>
+
+<span class="nc" id="L15">  private int torpedoCount = 0;</span>
+<span class="nc" id="L16">  private Random generator = new Random();</span>
+
+<span class="nc" id="L18">  public TorpedoStore(int numberOfTorpedos){</span>
+<span class="nc" id="L19">    this.torpedoCount = numberOfTorpedos;</span>
+
+    // update failure rate if it was specified in an environment variable
+<span class="nc" id="L22">    String failureEnv = System.getenv(&quot;IVT_RATE&quot;);</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">    if (failureEnv != null){</span>
+      try {
+<span class="nc" id="L25">        FAILURE_RATE = Double.parseDouble(failureEnv);</span>
+<span class="nc" id="L26">      } catch (NumberFormatException nfe) {</span>
+<span class="nc" id="L27">        FAILURE_RATE = 0.0;</span>
+      }
+    }
+<span class="nc" id="L30">  }</span>
+
+  public boolean fire(int numberOfTorpedos){
+<span class="nc bnc" id="L33" title="All 4 branches missed.">    if(numberOfTorpedos &lt; 1 || numberOfTorpedos &gt; this.torpedoCount){</span>
+<span class="nc" id="L34">      throw new IllegalArgumentException(&quot;numberOfTorpedos&quot;);</span>
+    }
+
+<span class="nc" id="L37">    boolean success = false;</span>
+
+    // simulate random overheating of the launcher bay which prevents firing :)
+<span class="nc" id="L40">    double r = generator.nextDouble();</span>
+
+<span class="nc bnc" id="L42" title="All 2 branches missed.">    if (r &gt;= FAILURE_RATE) {</span>
+      // successful firing
+<span class="nc" id="L44">      this.torpedoCount -= numberOfTorpedos;</span>
+<span class="nc" id="L45">      success = true;</span>
+<span class="nc" id="L46">    } else {</span>
+      // simulated failure
+<span class="nc" id="L48">      success = false;</span>
+    }
+
+<span class="nc" id="L51">    return success;</span>
+  }
+
+  public boolean isEmpty(){
+<span class="nc bnc" id="L55" title="All 2 branches missed.">    return this.torpedoCount &lt;= 0;</span>
+  }
+
+  public int getTorpedoCount() {
+<span class="nc" id="L59">    return this.torpedoCount;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
